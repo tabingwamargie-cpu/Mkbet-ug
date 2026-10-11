@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MKBET.UG - Aviator LIVE</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
+body{background:#000;color:#fff}
+.top{background:#0e5a2a;padding:10px;display:flex;gap:8px;align-items:center}
+.logo{color:#ffeb00;font-weight:900;font-size:20px}
+.live{background:red;color:#fff;text-align:center;padding:6px;font-size:11px;font-weight:900}
+#avi{height:240px;background:#000;position:relative;border-bottom:3px solid #ffeb00}
+#avi canvas{width:100%;height:100%}
+.mult{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:52px;font-weight:900;color:#fff;text-shadow:0 0 20px #ffeb00}
+.panel{padding:12px;display:flex;gap:8px;background:#111}
+.panel input{flex:1;padding:12px;border-radius:10px;background:#000;border:1px solid #333;color:#fff;text-align:center;font-weight:800}
+.btn{padding:12px 20px;border-radius:10px;border:0;font-weight:900}
+.btn.bet{background:#ffeb00;color:#000}
+.btn.cash{background:#00ff88;color:#000}
+</style>
+</head>
+<body>
+<div class="top">
+<div class="logo">MKBET.UG</div>
+<div style="flex:1"></div>
+<div style="background:#111;border:1px solid #333;border-radius:20px;padding:5px 10px;font-size:11px">UGX <span id="bal">5000</span></div>
+</div>
+<div class="live">🔴 <span id="cnt">147</span> ONLINE NOW - AVIATOR LIVE - LAST WIN UGX <span id="lw">12k</span></div>
+<div id="avi"><canvas id="c"></canvas><div class="mult" id="m">1.00x</div></div>
+<div class="panel">
+<input id="amt" type="number" value="1000">
+<button class="btn bet" id="bBtn" onclick="bet()">BET ✈️</button>
+<button class="btn cash" id="cBtn" onclick="cash()" style="display:none">CASHOUT <span id="cm">1x</span></button>
+</div>
+<div style="padding:10px;display:flex;gap:8px">
+<button onclick="dep()" style="flex:1;padding:12px;border-radius:10px;background:#222;color:#fff;border:0;font-weight:800">💰 DEPOSIT 0709877694</button>
+<button onclick="wd()" style="flex:1;padding:12px;border-radius:10px;background:#222;color:#fff;border:0;font-weight:800">💸 WITHDRAW</button>
+</div>
+<script>
+let bal=5000,playing=false,betOn=false,mult=1,crash=0,px=0;
+let ctx=document.getElementById('c').getContext('2d');
+function rs(){let e=document.getElementById('c');e.width=e.offsetWidth*2;e.height=e.offsetHeight*2;}rs();
+function draw(x,y){
+ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);
+ctx.strokeStyle='#111';ctx.lineWidth=1;
+for(let i=0;i<ctx.canvas.width;i+=100){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,ctx.canvas.height);ctx.stroke();}
+ctx.strokeStyle='#ffeb00';ctx.lineWidth=4;ctx.shadowBlur=playing?15:0;ctx.shadowColor='#ffeb00';
+ctx.beginPath();ctx.moveTo(0,ctx.canvas.height-30);ctx.quadraticCurveTo(x*0.5,ctx.canvas.height-30-y*0.3,x,ctx.canvas.height-30-y);ctx.stroke();ctx.shadowBlur=0;
+ctx.font='42px serif';ctx.fillText('✈️',x-15,ctx.canvas.height-40-y);
+}
+function newR(){
+document.getElementById('m').innerText='1.00x';document.getElementById('m').style.color='#fff';
+document.getElementById('bBtn').style.display='block';document.getElementById('cBtn').style.display='none';
+betOn=false;playing=false;px=0;mult=1;draw(0,0);setTimeout(start,3000);
+}
+function start(){
+crash=Math.random()<0.2?1+Math.random():Math.random()*10+2;
+playing=true;
+let id=setInterval(()=>{
+if(!playing){clearInterval(id);return}
+mult+=0.03+mult*0.01;px+=4;draw(px,px*0.45);
+document.getElementById('m').innerText=mult.toFixed(2)+'x';
+document.getElementById('cm').innerText=mult.toFixed(2)+'x';
+if(mult>=crash){
+playing=false;
+document.getElementById('m').innerText='CRASH @ '+mult.toFixed(2)+'x';
+document.getElementById('m').style.color='red';
+if(betOn){alert('💥 CRASH! Lost UGX '+document.getElementById('amt').value);betOn=false;document.getElementById('bBtn').style.display='block';document.getElementById('cBtn').style.display='none';}
+clearInterval(id);setTimeout(newR,3000);
+}
+},50);
+}
+function bet(){
+let a=parseInt(document.getElementById('amt').value)||1000;
+if(a>bal){alert('No balance! Deposit to 0709877694');return}
+bal-=a;document.getElementById('bal').innerText=bal;betOn=true;
+document.getElementById('bBtn').style.display='none';document.getElementById('cBtn').style.display='block';
+}
+function cash(){
+if(!betOn||!playing)return;
+let a=parseInt(document.getElementById('amt').value)||1000;
+let w=Math.floor(a*mult);bal+=w;document.getElementById('bal').innerText=bal;
+document.getElementById('lw').innerText=w.toLocaleString();
+betOn=false;document.getElementById('bBtn').style.display='block';document.getElementById('cBtn').style.display='none';
+alert('✅ WON UGX '+w+' @ '+mult.toFixed(2)+'x');
+}
+function dep(){let a=prompt('Amount to deposit to 0709877694:');if(a){bal+=parseInt(a);document.getElementById('bal').innerText=bal;alert('Deposit UGX '+a+' to 0709877694 received!');}}
+function wd(){let a=prompt('Withdraw amount:');if(a){let v=parseInt(a);if(v>bal){alert('No balance');return}bal-=v;document.getElementById('bal').innerText=bal;alert('Withdraw UGX '+v+' sent to your momo from 0709877694');}}
+setInterval(()=>{document.getElementById('cnt').innerText=120+Math.floor(Math.random()*50);},2000);
+draw(0,0);setTimeout(start,2000);
+</script>
+</body>
+</html>[Code eri waggulu - njikuddiza mu message eddako bwoba ogisabye - gamba "weereza code" - nnaakutumira full code nga tewali kutemako]
